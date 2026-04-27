@@ -21,6 +21,126 @@ const demoProducts = {
   }
 };
 
+let cameraStream = null;
+
+const cameraFeed = document.querySelector("#cameraFeed");
+const captureCanvas = document.querySelector("#captureCanvas");
+const cameraStatus = document.querySelector("#cameraStatus");
+
+const setCameraStatus = (message, isError = false) => {
+  cameraStatus.textContent = message;
+  cameraStatus.classList.toggle("error", isError);
+};
+
+const startCamera = async () => {
+  if (!navigator.mediaDevices?.getUserMedia) {
+    setCameraStatus("Camera is not supported in this browser.", true);
+    return false;
+  }
+
+  if (cameraStream) {
+    return true;
+  }
+
+  try {
+    cameraStream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: "user",
+        width: { ideal: 960 },
+        height: { ideal: 720 }
+      },
+      audio: false
+    });
+    cameraFeed.srcObject = cameraStream;
+    cameraFeed.classList.add("active");
+    setCameraStatus("Camera ready. Center your face and tap Scan Face.");
+    return true;
+  } catch (error) {
+    setCameraStatus("Camera permission denied or no camera found. Manual scan still works.", true);
+    return false;
+  }
+};
+
+const captureFrame = () => {
+  if (!cameraFeed.videoWidth || !cameraFeed.videoHeight) {
+    return {
+      image: "",
+      sample: null
+    };
+  }
+
+  const context = captureCanvas.getContext("2d", { willReadFrequently: true });
+  captureCanvas.width = cameraFeed.videoWidth;
+  captureCanvas.height = cameraFeed.videoHeight;
+  context.save();
+  context.scale(-1, 1);
+  context.drawImage(cameraFeed, -captureCanvas.width, 0, captureCanvas.width, captureCanvas.height);
+  context.restore();
+
+  return {
+    image: captureCanvas.toDataURL("image/jpeg", 0.72),
+    sample: sampleFaceRegion(context, captureCanvas.width, captureCanvas.height)
+  };
+};
+
+const sampleFaceRegion = (context, width, height) => {
+  const sampleWidth = Math.floor(width * 0.26);
+  const sampleHeight = Math.floor(height * 0.18);
+  const x = Math.floor((width - sampleWidth) / 2);
+  const y = Math.floor(height * 0.34);
+  const pixels = context.getImageData(x, y, sampleWidth, sampleHeight).data;
+  let r = 0;
+  let g = 0;
+  let b = 0;
+  let count = 0;
+
+  for (let index = 0; index < pixels.length; index += 16) {
+    r += pixels[index];
+    g += pixels[index + 1];
+    b += pixels[index + 2];
+    count += 1;
+  }
+
+  if (!count) {
+    return null;
+  }
+
+  return {
+    r: Math.round(r / count),
+    g: Math.round(g / count),
+    b: Math.round(b / count)
+  };
+};
+
+const estimateToneFromSample = (sample) => {
+  if (!sample) {
+    return {
+      skinTone: document.querySelector("#skinTone").value,
+      undertone: document.querySelector("#undertone").value
+    };
+  }
+
+  const brightness = (sample.r + sample.g + sample.b) / 3;
+  const warmth = sample.r - sample.b;
+  let skinTone = "medium";
+
+  if (brightness > 190) {
+    skinTone = "fair";
+  } else if (brightness > 155) {
+    skinTone = "light";
+  } else if (brightness > 110) {
+    skinTone = "medium";
+  } else if (brightness > 75) {
+    skinTone = "tan";
+  } else {
+    skinTone = "deep";
+  }
+
+  const undertone = warmth > 14 ? "warm" : warmth < -6 ? "cool" : "neutral";
+
+  return { skinTone, undertone };
+};
+
 const api = async (path, body) => {
   try {
     const response = await fetch(path, {
@@ -139,6 +259,12 @@ const updateClock = () => {
 const renderMakeupPlan = (plan) => {
   const output = document.querySelector("#makeupOutput");
   output.innerHTML = "";
+  if (plan.summary) {
+    const summary = document.createElement("div");
+    summary.className = "step summary-step";
+    summary.textContent = plan.summary;
+    output.appendChild(summary);
+  }
   plan.steps.forEach((step) => {
     const item = document.createElement("div");
     item.className = "step";
@@ -175,12 +301,22 @@ const renderTryOn = (data) => {
 };
 
 document.querySelector("#scanFace").addEventListener("click", async () => {
+  setCameraStatus("Scanning face...");
+  const cameraReady = await startCamera();
+  const frame = cameraReady ? captureFrame() : { image: "", sample: null };
+  const estimated = estimateToneFromSample(frame.sample);
+
+  document.querySelector("#skinTone").value = estimated.skinTone;
+  document.querySelector("#undertone").value = estimated.undertone;
+
   const data = await api("/api/face/analyze", {
-    skin_tone: document.querySelector("#skinTone").value,
-    undertone: document.querySelector("#undertone").value,
-    face_shape: "round"
+    skin_tone: estimated.skinTone,
+    undertone: estimated.undertone,
+    face_shape: "round",
+    image: frame.image
   });
   renderMakeupPlan(data.makeup_plan);
+  setCameraStatus(data.ai_enabled ? "Scan complete with AI suggestion." : "Scan complete.");
 });
 
 document.querySelector("#scanProduct").addEventListener("click", async () => {
@@ -201,3 +337,4 @@ document.querySelector("#matchDress").addEventListener("click", async () => {
 
 updateClock();
 setInterval(updateClock, 1000);
+startCamera();
