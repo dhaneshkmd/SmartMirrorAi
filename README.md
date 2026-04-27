@@ -27,6 +27,8 @@ static/
   index.html                  Kiosk dashboard
   styles.css                  Mirror UI styles
   app.js                      Frontend API calls
+api/
+  face/analyze.js             Vercel face scan endpoint with Gemini support
 run.py                        App launcher
 requirements.txt              Optional production dependencies
 ```
@@ -55,9 +57,16 @@ For a simple upload deployment, include these paths:
 index.html
 vercel.json
 static/
+api/
 ```
 
-The deployed Vercel page runs in static demo mode. The local Python backend remains available when you run `python run.py` on your computer.
+Set this Vercel environment variable for Gemini-powered scan suggestions:
+
+```text
+Smart_Mirror_API_Key
+```
+
+The camera runs in the browser with `getUserMedia`. Gemini calls run only from the Vercel API route so the key is not exposed in frontend JavaScript. The local Python backend remains available when you run `python run.py` on your computer.
 
 ## Demo API
 
