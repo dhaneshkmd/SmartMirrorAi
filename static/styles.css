@@ -1,0 +1,277 @@
+:root {
+  color-scheme: dark;
+  --bg: #090b0f;
+  --panel: rgba(20, 25, 31, 0.82);
+  --panel-strong: rgba(31, 38, 47, 0.94);
+  --text: #f4f7fb;
+  --muted: #aeb8c5;
+  --line: rgba(255, 255, 255, 0.12);
+  --accent: #58d6c9;
+  --accent-2: #f0b76f;
+  --danger: #ff8c8c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-strong);
+  color: var(--text);
+  cursor: pointer;
+}
+
+button.primary {
+  background: var(--accent);
+  color: #061012;
+  font-weight: 700;
+}
+
+input,
+select {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #111820;
+  color: var(--text);
+  padding: 0 12px;
+}
+
+.mirror-shell {
+  min-height: 100vh;
+  padding: 28px;
+  background-image:
+    linear-gradient(135deg, rgba(255,255,255,0.07), transparent 38%),
+    linear-gradient(315deg, rgba(88,214,201,0.08), transparent 44%);
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.label {
+  color: var(--accent);
+  margin: 0 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.78rem;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 0;
+  font-size: clamp(2rem, 4vw, 4rem);
+  letter-spacing: 0;
+}
+
+h2 {
+  font-size: 1.2rem;
+  margin-bottom: 16px;
+}
+
+.clock {
+  text-align: right;
+  color: var(--muted);
+}
+
+.clock span {
+  display: block;
+}
+
+#time {
+  color: var(--text);
+  font-size: clamp(2rem, 5vw, 4.6rem);
+  line-height: 1;
+}
+
+.dashboard {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(320px, 1.2fr);
+  gap: 18px;
+}
+
+.panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 18px;
+  min-width: 0;
+}
+
+.camera-panel {
+  min-height: 430px;
+}
+
+.scan-visual {
+  display: grid;
+  place-items: center;
+  min-height: 310px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at center, rgba(88, 214, 201, 0.12), transparent 58%),
+    #10161d;
+}
+
+.face-outline {
+  position: relative;
+  width: min(210px, 60vw);
+  aspect-ratio: 0.72;
+  border: 3px solid rgba(244, 247, 251, 0.78);
+  border-radius: 48% 48% 44% 44%;
+}
+
+.eye,
+.mouth {
+  position: absolute;
+  display: block;
+  background: var(--accent);
+}
+
+.eye {
+  width: 22px;
+  height: 8px;
+  top: 38%;
+  border-radius: 8px;
+}
+
+.eye.left {
+  left: 27%;
+}
+
+.eye.right {
+  right: 27%;
+}
+
+.mouth {
+  left: 35%;
+  bottom: 22%;
+  width: 30%;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--accent-2);
+}
+
+.controls,
+.input-row,
+.form-grid {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.controls {
+  grid-template-columns: 1fr 0.8fr 0.8fr;
+}
+
+.input-row {
+  grid-template-columns: 1fr 96px;
+}
+
+.form-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.form-grid button {
+  grid-column: span 2;
+}
+
+.output-list {
+  display: grid;
+  gap: 10px;
+}
+
+.step,
+.result-box,
+.score-box {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(8, 12, 16, 0.56);
+  padding: 12px;
+}
+
+.step strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--accent);
+}
+
+.empty {
+  color: var(--muted);
+}
+
+.result-box:empty {
+  display: none;
+}
+
+.score-box {
+  margin-top: 14px;
+}
+
+.score {
+  display: block;
+  color: var(--accent-2);
+  font-size: 3rem;
+  font-weight: 800;
+}
+
+.error {
+  color: var(--danger);
+}
+
+@media (max-width: 820px) {
+  .mirror-shell {
+    padding: 18px;
+  }
+
+  .top-bar,
+  .dashboard {
+    display: block;
+  }
+
+  .clock {
+    text-align: left;
+    margin-top: 18px;
+  }
+
+  .panel {
+    margin-bottom: 14px;
+  }
+
+  .controls,
+  .input-row,
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid button {
+    grid-column: auto;
+  }
+}

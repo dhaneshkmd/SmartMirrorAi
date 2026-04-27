@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Smart Mirror</title>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+  <body>
+    <main class="mirror-shell">
+      <section class="top-bar">
+        <div>
+          <p class="label">Smart Mirror</p>
+          <h1>Beauty & Style Assistant</h1>
+        </div>
+        <div class="clock">
+          <span id="time">--:--</span>
+          <span id="date">Loading</span>
+        </div>
+      </section>
+
+      <section class="dashboard">
+        <article class="panel camera-panel">
+          <div class="scan-visual" aria-hidden="true">
+            <div class="face-outline">
+              <span class="eye left"></span>
+              <span class="eye right"></span>
+              <span class="mouth"></span>
+            </div>
+          </div>
+          <div class="controls">
+            <button id="scanFace" class="primary">Scan Face</button>
+            <select id="skinTone" aria-label="Skin tone">
+              <option value="fair">Fair</option>
+              <option value="light">Light</option>
+              <option value="medium" selected>Medium</option>
+              <option value="tan">Tan</option>
+              <option value="deep">Deep</option>
+            </select>
+            <select id="undertone" aria-label="Undertone">
+              <option value="warm" selected>Warm</option>
+              <option value="cool">Cool</option>
+              <option value="neutral">Neutral</option>
+            </select>
+          </div>
+        </article>
+
+        <article class="panel output-panel">
+          <h2>Makeup Plan</h2>
+          <div id="makeupOutput" class="output-list">
+            <p class="empty">Tap Scan Face to generate a routine.</p>
+          </div>
+        </article>
+
+        <article class="panel product-panel">
+          <h2>Product Scanner</h2>
+          <div class="input-row">
+            <input id="barcode" value="8901030970001" aria-label="Barcode">
+            <button id="scanProduct">Scan</button>
+          </div>
+          <div id="productOutput" class="result-box"></div>
+        </article>
+
+        <article class="panel tryon-panel">
+          <h2>Dress Match</h2>
+          <div class="form-grid">
+            <select id="dressColor" aria-label="Dress color">
+              <option value="coral">Coral</option>
+              <option value="rose">Rose</option>
+              <option value="blue">Blue</option>
+              <option value="olive">Olive</option>
+              <option value="black">Black</option>
+            </select>
+            <select id="occasion" aria-label="Occasion">
+              <option value="party">Party</option>
+              <option value="formal">Formal</option>
+              <option value="casual">Casual</option>
+              <option value="work">Work</option>
+            </select>
+            <select id="dressCut" aria-label="Dress cut">
+              <option value="a-line">A-line</option>
+              <option value="wrap">Wrap</option>
+              <option value="bodycon">Bodycon</option>
+              <option value="empire">Empire</option>
+              <option value="sheath">Sheath</option>
+            </select>
+            <button id="matchDress">Match</button>
+          </div>
+          <div id="tryOnOutput" class="score-box">
+            <span class="score">--%</span>
+            <p>Ready for a styling score.</p>
+          </div>
+        </article>
+      </section>
+    </main>
+    <script src="/static/app.js"></script>
+  </body>
+</html>
