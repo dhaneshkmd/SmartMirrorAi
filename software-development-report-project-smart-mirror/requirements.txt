@@ -1,0 +1,9 @@
+# The prototype runs with the Python standard library only.
+# Optional production dependencies based on the report:
+flask>=3.0
+opencv-python>=4.9
+mediapipe>=0.10
+numpy>=1.26
+pyzbar>=0.1
+pytesseract>=0.3
+vosk>=0.3
